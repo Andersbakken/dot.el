@@ -1,3 +1,9 @@
+;; Naive vim-like dot implementation
+;; To use:
+;; (require 'dot)
+;; (enable-dot 1)
+;; (define-key 'global-map (kbd "C-.") 'dot)
+
 (defvar dot-last-commands nil)
 (defvar dot-last-position nil)
 (defvar dot-cut nil)
@@ -46,13 +52,13 @@
          (dot-append-command real-this-command))
         (t (setq dot-cut t))))
 
-(defun dot-mode (&optional arg)
-  (if (or (not arg)
-          (and (numberp arg) (> arg 0)))
+(defun enable-dot (&optional arg)
+  (if (and (numberp arg)
+           (<= arg 0))
       (progn
-        (add-hook 'post-command-hook 'dot-post-command-hook)
-        (add-hook 'pre-command-hook 'dot-pre-command-hook))
-    (remove-hook 'post-command-hook 'dot-post-command-hook)
-    (remove-hook 'pre-command-hook 'dot-pre-command-hook)))
+        (remove-hook 'post-command-hook 'dot-post-command-hook)
+        (remove-hook 'pre-command-hook 'dot-pre-command-hook))
+    (add-hook 'post-command-hook 'dot-post-command-hook)
+    (add-hook 'pre-command-hook 'dot-pre-command-hook)))
 
 (provide 'dot)
