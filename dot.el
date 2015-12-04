@@ -21,7 +21,9 @@
   (interactive)
   (setq dot-last-commands nil))
 
-(defconst dot-standard-insertion-commands (list 'self-insert-command 'yank))
+(defconst dot-standard-insertion-commands (list 'self-insert-command
+                                                'yank
+                                                'reindent-then-newline-and-indent))
 (defconst dot-standard-replayable-commands (list 'delete-forward-char
                                                  'delete-backward-char
                                                  'kill-region
@@ -38,6 +40,7 @@
                                                  'transpose-subr
                                                  'transpose-words
                                                  'backward-delete-char-untabify))
+
 
 (defvar dot-additional-insertion-commands nil)
 (defvar dot-additional-replayable-commands nil)
