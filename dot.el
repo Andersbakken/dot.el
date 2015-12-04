@@ -22,15 +22,25 @@
   (setq dot-last-commands nil))
 
 (defconst dot-standard-insertion-commands (list 'self-insert-command 'yank))
-(defconst dot-standard-deletion-commands (list 'delete-forward-char
-                                               'delete-backward-char
-                                               'kill-region
-                                               'kill-word
-                                               'backward-kill-word
-                                               'backward-delete-char-untabify))
+(defconst dot-standard-replayable-commands (list 'delete-forward-char
+                                                 'delete-backward-char
+                                                 'kill-region
+                                                 'kill-word
+                                                 'backward-kill-word
+                                                 'upcase-word
+                                                 'upcase-region
+                                                 'upcase-char
+                                                 'downcase-word
+                                                 'downcase-region
+                                                 'downcase-char
+                                                 'transpose-lines
+                                                 'transpose-chars
+                                                 'transpose-subr
+                                                 'transpose-words
+                                                 'backward-delete-char-untabify))
 
 (defvar dot-additional-insertion-commands nil)
-(defvar dot-additional-deletion-commands nil)
+(defvar dot-additional-replayable-commands nil)
 
 (defun dot-pre-command-hook ()
   (setq dot-last-position (point)
@@ -41,8 +51,8 @@
                             (member real-this-command dot-additional-insertion-commands))
                         (and (not (= (point) dot-last-position))
                              (buffer-substring-no-properties (point) dot-last-position)))
-                       ((or (member real-this-command dot-standard-deletion-commands)
-                            (member real-this-command dot-additional-deletion-commands))
+                       ((or (member real-this-command dot-standard-replayable-commands)
+                            (member real-this-command dot-additional-replayable-commands))
                         real-this-command)
                        (t (setq dot-cut t) nil))))
     (when command
