@@ -32,25 +32,23 @@
 (defvar dot-additional-insertion-commands nil)
 (defvar dot-additional-deletion-commands nil)
 
-(defun dot-append-command (command)
-  (if dot-cut
-      (setq dot-cut nil dot-last-commands (list command))
-    (setq dot-last-commands (append dot-last-commands (list command)))))
-
-(defun dot-append-insert-command ()
-
 (defun dot-pre-command-hook ()
   (setq dot-last-position (point)
         dot-last-buffer-size (save-restriction (widen) (point-max))))
 
 (defun dot-post-command-hook ()
-  (cond ((or (member real-this-command dot-standard-insertion-commands)
-             (member real-this-command dot-additional-insertion-commands))
-         (dot-append-command (buffer-substring-no-properties (point) dot-last-position)))
-        ((or (member real-this-command dot-standard-deletion-commands)
-             (member real-this-command dot-additional-deletion-commands))
-         (dot-append-command real-this-command))
-        (t (setq dot-cut t))))
+  (let ((command (cond ((or (member real-this-command dot-standard-insertion-commands)
+                            (member real-this-command dot-additional-insertion-commands))
+                        (and (not (= (point) dot-last-position))
+                             (buffer-substring-no-properties (point) dot-last-position)))
+                       ((or (member real-this-command dot-standard-deletion-commands)
+                            (member real-this-command dot-additional-deletion-commands))
+                        real-this-command)
+                       (t (setq dot-cut t) nil))))
+    (when command
+      (if dot-cut
+          (setq dot-cut nil dot-last-commands (list command))
+        (setq dot-last-commands (append dot-last-commands (list command)))))))
 
 (defun enable-dot (&optional arg)
   (if (and (numberp arg)
